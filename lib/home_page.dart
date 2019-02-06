@@ -13,7 +13,24 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("My Location Address")),
+        title: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.location_on,
+                color: Colors.lime,
+              ),
+              SizedBox(width: Constant.SIZED_BOX_WIDTH),
+              Text("My Location Address"),
+              SizedBox(width: Constant.SIZED_BOX_WIDTH),
+              Icon(
+                Icons.public,
+                color: Colors.lime,
+              ),
+            ],
+          ),
+        ),
       ),
       body: AddressButtonManager(
         child: BodyStructure(),
@@ -55,7 +72,7 @@ class _MapViewState extends State<MapView> {
       flex: 6,
       child: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: LatLng(-52.0, -12.0),
+          target: LatLng(37.7749, -122.4194),
           zoom: 1,
         ),
         onMapCreated: (controller) {

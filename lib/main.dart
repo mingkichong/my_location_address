@@ -18,6 +18,7 @@ class MyLocationAddressApp extends StatelessWidget {
         fontFamily: 'century_gothic',
         primarySwatch: Colors.blueGrey,
         accentColor: Colors.amberAccent,
+        brightness: Brightness.dark,
       ),
       home: HomePage(),
     );
