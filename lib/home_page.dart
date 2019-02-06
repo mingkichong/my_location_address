@@ -49,6 +49,13 @@ class AddressText extends StatelessWidget {
           onLongPress: () {
             AddressStore.readAddress(context).then((value) {
               Clipboard.setData(ClipboardData(text: value));
+              Scaffold.of(context).showSnackBar(SnackBar(
+                duration: Duration(seconds: 2),
+                content: Text(
+                  'Address copied to clipboard',
+                  textAlign: TextAlign.center,
+                ),
+              ));
               Vibrate.feedback(FeedbackType.selection);
             });
           },
