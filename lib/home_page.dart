@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibrate/vibrate.dart';
 import './constant.dart';
 import './control_button_bloc.dart';
@@ -35,7 +36,32 @@ class BodyStructure extends StatelessWidget {
         SizedBox(height: Constant.SIZED_BOX_HEIGHT),
         AddressText(),
         SizedBox(height: Constant.SIZED_BOX_HEIGHT),
+        MapView(),
       ],
+    );
+  }
+}
+
+class MapView extends StatefulWidget {
+  @override
+  _MapViewState createState() => _MapViewState();
+}
+
+class _MapViewState extends State<MapView> {
+  GoogleMapController mapController;
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 6,
+      child: GoogleMap(
+        initialCameraPosition: CameraPosition(
+          target: LatLng(-52.0, -12.0),
+          zoom: 1,
+        ),
+        onMapCreated: (controller) {
+          mapController = controller;
+        },
+      ),
     );
   }
 }
@@ -96,10 +122,16 @@ class _GetMyLocationButton extends StatelessWidget {
       textColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constant.BUTTON_BORDER_RADIUS)),
       child: Padding(
-        padding: const EdgeInsets.all(Constant.BUTTON_PADDING),
-        child: Text(
-          "Get My Address",
-          style: TextStyle(fontSize: Constant.BUTTON_FONT_SIZE),
+        padding: const EdgeInsets.fromLTRB(0.0, Constant.BUTTON_PADDING, 0.0, Constant.BUTTON_PADDING),
+        child: Row(
+          children: <Widget>[
+            Icon(Icons.my_location),
+            SizedBox(width: Constant.BUTTON_ICON_SPACING),
+            Text(
+              "Get My Address",
+              style: TextStyle(fontSize: Constant.BUTTON_FONT_SIZE, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
       onPressed: () {
@@ -147,10 +179,16 @@ class _ClearButton extends StatelessWidget {
         textColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constant.BUTTON_BORDER_RADIUS)),
         child: Padding(
-          padding: const EdgeInsets.all(Constant.BUTTON_PADDING),
-          child: Text(
-            "Clear",
-            style: TextStyle(fontSize: Constant.BUTTON_FONT_SIZE),
+          padding: const EdgeInsets.fromLTRB(0.0, Constant.BUTTON_PADDING, 0.0, Constant.BUTTON_PADDING),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.remove_circle_outline),
+              SizedBox(width: Constant.BUTTON_ICON_SPACING),
+              Text(
+                "Clear",
+                style: TextStyle(fontSize: Constant.BUTTON_FONT_SIZE, fontWeight: FontWeight.normal),
+              ),
+            ],
           ),
         ),
         onPressed: () {
@@ -158,7 +196,10 @@ class _ClearButton extends StatelessWidget {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-                  content: Text("Long press to clear"),
+                  content: Text(
+                    "Long press to clear",
+                    textAlign: TextAlign.center,
+                  ),
                 ),
           );
         },

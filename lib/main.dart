@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+//import 'package:flutter/rendering.dart';
 
 import './home_page.dart';
 
-void main() => runApp(MyLocationAddressApp());
+void main() {
+//  debugPaintSizeEnabled = true;
+  runApp(MyLocationAddressApp());
+}
 
 class MyLocationAddressApp extends StatelessWidget {
   // This widget is the root of your application.

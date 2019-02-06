@@ -8,7 +8,7 @@ class AddressButtonManager extends InheritedWidget {
     Key key,
     @required Widget child,
     @required this.bloc,
-  })  : assert(child != null),
+  })  : assert(child != null && bloc != null),
         super(key: key, child: child);
 
   static AddressButtonManager of(BuildContext context) {

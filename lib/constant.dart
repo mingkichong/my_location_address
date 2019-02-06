@@ -5,6 +5,7 @@ class Constant {
   static const double BUTTON_FONT_SIZE = 20.0;
   static const double BUTTON_PADDING = 8.0;
   static const double BUTTON_BORDER_RADIUS = 15.0;
+  static const double BUTTON_ICON_SPACING = 5.0;
 
   static const double TEXT_ADDRESS_FONT_SIZE = 17.0;
 
