@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import './constant.dart';
+
+import 'constant.dart';
 
 class AddressStore {
   static Future<String> readAddress() async {

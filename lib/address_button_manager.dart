@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './control_button_bloc.dart';
+
+import 'control_button_bloc.dart';
 
 class AddressButtonManager extends InheritedWidget {
   final ControlButtonBloc bloc;
