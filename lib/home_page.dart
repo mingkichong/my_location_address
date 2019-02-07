@@ -97,11 +97,12 @@ class _MapViewState extends State<MapView> {
                   ", " +
                   position.longitude.toStringAsFixed(Constant.GEO_PRECISION);
               controller
-                  .animateCamera(CameraUpdate.newLatLngZoom(position, Constant.DEFAULT_ZOOM_LEVEL))
+                  .moveCamera(CameraUpdate.newLatLngZoom(position, Constant.DEFAULT_ZOOM_LEVEL))
                   .then((_) {
                 controller.addMarker(MarkerOptions(
                   position: position,
                   infoWindowText: InfoWindowText(address, geolocation),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
                 ));
               });
             });
@@ -217,6 +218,7 @@ class _GetMyLocationButton extends StatelessWidget {
                   MarkerOptions(
                     position: latLng,
                     infoWindowText: InfoWindowText(address, geolocation),
+                    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
                   ),
                 );
 
