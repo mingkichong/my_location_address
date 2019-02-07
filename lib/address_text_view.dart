@@ -22,7 +22,7 @@ class AddressTextView extends StatelessWidget {
                   children: <Widget>[
                     Icon(
                       Icons.content_copy,
-                      color: Colors.lime,
+                      color: Colors.lightBlue,
                     ),
                     SizedBox(width: Constant.SIZED_BOX_WIDTH),
                     Text(
