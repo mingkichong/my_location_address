@@ -268,15 +268,13 @@ class _ClearButton extends StatelessWidget {
         ),
         onPressed: () {
           Vibrate.feedback(FeedbackType.warning);
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  content: Text(
-                    "Long press to clear",
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-          );
+          Scaffold.of(context).showSnackBar(SnackBar(
+            duration: Duration(seconds: 2),
+            content: Text(
+              'Long press to clear',
+              textAlign: TextAlign.center,
+            ),
+          ));
         },
       ),
     );
