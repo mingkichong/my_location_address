@@ -1,9 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/material.dart';
 import './constant.dart';
 
 class AddressStore {
-  static Future<String> readAddress(BuildContext context) async {
+  static Future<String> readAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(Constant.SHARED_PREF_ADDRESS) ?? Constant.DEFAULT_ADDRESS;
   }

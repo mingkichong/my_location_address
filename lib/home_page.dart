@@ -9,6 +9,7 @@ import './address_button_manager.dart';
 import './address_store.dart';
 import 'map_controller_manager.dart';
 import 'map_controller.dart';
+import 'geo_store.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -48,14 +49,22 @@ class HomePage extends StatelessWidget {
 class BodyStructure extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    AddressStore.readAddress(context).then((value) {
-      AddressButtonManager.of(context).bloc.addressSink.add(value);
+    AddressStore.readAddress().then((address) {
+      GeoStore.readLatLng().then((position) {
+        String addressGeo = address +
+            " \n(" +
+            position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
+            ", " +
+            position.longitude.toStringAsFixed(Constant.GEO_PRECISION) +
+            ")";
+        AddressButtonManager.of(context).bloc.addressSink.add(addressGeo);
+      });
     });
     return Column(
       children: <Widget>[
         SizedBox(height: Constant.SIZED_BOX_HEIGHT),
         ControlButtons(),
-        SizedBox(height: Constant.SIZED_BOX_HEIGHT),
+        SizedBox(height: Constant.SIZED_BOX_HEIGHT / 2),
         AddressText(),
         SizedBox(height: Constant.SIZED_BOX_HEIGHT),
         MapView(),
@@ -82,9 +91,28 @@ class _MapViewState extends State<MapView> {
         ),
         onMapCreated: (controller) {
           MapControllerManager.of(context).mapController.controller = googleMapController = controller;
+          AddressStore.readAddress().then((address) {
+            GeoStore.readLatLng().then((LatLng position) {
+              String geolocation = position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
+                  ", " +
+                  position.longitude.toStringAsFixed(Constant.GEO_PRECISION);
+              controller
+                  .animateCamera(CameraUpdate.newLatLngZoom(position, Constant.DEFAULT_ZOOM_LEVEL))
+                  .then((_) {
+                controller.addMarker(MarkerOptions(
+                  position: position,
+                  infoWindowText: InfoWindowText(address, geolocation),
+                ));
+              });
+            });
+          });
         },
         tiltGesturesEnabled: false,
         compassEnabled: false,
+        rotateGesturesEnabled: false,
+        scrollGesturesEnabled: true,
+        zoomGesturesEnabled: true,
+        mapType: MapType.normal,
       ),
     );
   }
@@ -97,7 +125,7 @@ class AddressText extends StatelessWidget {
       child: SingleChildScrollView(
         child: GestureDetector(
           onLongPress: () {
-            AddressStore.readAddress(context).then((value) {
+            AddressStore.readAddress().then((value) {
               Clipboard.setData(ClipboardData(text: value));
               Scaffold.of(context).showSnackBar(SnackBar(
                 duration: Duration(seconds: 2),
@@ -163,11 +191,8 @@ class _GetMyLocationButton extends StatelessWidget {
       ),
       onPressed: () {
         Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((position) {
-          MapControllerManager.of(context).mapController.controller.addMarker(
-                MarkerOptions(
-                  position: LatLng(position.latitude, position.longitude),
-                ),
-              );
+          GeoStore.writeLatitude(position.latitude);
+          GeoStore.writeLongitude(position.longitude);
           Geolocator()
               .placemarkFromCoordinates(position.latitude, position.longitude)
               .then((placeMarkerList) {
@@ -181,14 +206,26 @@ class _GetMyLocationButton extends StatelessWidget {
                 ", " +
                 placeMarkerList.elementAt(0).country +
                 ", " +
-                placeMarkerList.elementAt(0).postalCode +
-                " \n(" +
-                placeMarkerList.elementAt(0).position.latitude.toString() +
-                "," +
-                placeMarkerList.elementAt(0).position.longitude.toString() +
-                ")";
+                placeMarkerList.elementAt(0).postalCode;
+            String geolocation =
+                placeMarkerList.elementAt(0).position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
+                    "," +
+                    placeMarkerList.elementAt(0).position.longitude.toStringAsFixed(Constant.GEO_PRECISION);
+            LatLng latLng = LatLng(position.latitude, position.longitude);
+            MapControllerManager.of(context).mapController.controller.clearMarkers();
+            MapControllerManager.of(context).mapController.controller.addMarker(
+                  MarkerOptions(
+                    position: latLng,
+                    infoWindowText: InfoWindowText(address, geolocation),
+                  ),
+                );
+
+            MapControllerManager.of(context)
+                .mapController
+                .controller
+                .animateCamera(CameraUpdate.newLatLngZoom(latLng, Constant.DEFAULT_ZOOM_LEVEL));
             AddressStore.writeAddress(address);
-            AddressButtonManager.of(context).bloc.addressSink.add(address);
+            AddressButtonManager.of(context).bloc.addressSink.add(address + "\n(" + geolocation + ")");
           });
         });
         Vibrate.feedback(FeedbackType.light);
