@@ -99,6 +99,8 @@ class _ClearButton extends StatelessWidget {
       onLongPress: () {
         MapControllerManager.of(context).mapController.controller.clearMarkers();
         AddressStore.writeAddress(Constant.DEFAULT_ADDRESS);
+        GeoStore.writeLatitude(Constant.DEFAULT_GEO_LAT);
+        GeoStore.writeLongitude(Constant.DEFAULT_GEO_LONG);
         AddressButtonManager.of(context).bloc.addressSink.add(Constant.DEFAULT_ADDRESS);
         Vibrate.feedback(FeedbackType.success);
       },

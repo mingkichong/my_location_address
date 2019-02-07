@@ -17,6 +17,9 @@ class Constant {
   static const double DEFAULT_GEO_LAT = 0.0;
   static const double DEFAULT_GEO_LONG = 0.0;
 
+  static const double SAN_FRAN_GEO_LAT = 37.7749;
+  static const double SAN_FRAN_GEO_LONG = -122.4194;
+
   static const double DEFAULT_ZOOM_LEVEL = 15.0;
 
   static const int GEO_PRECISION = 7;

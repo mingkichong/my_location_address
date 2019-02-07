@@ -19,25 +19,39 @@ class _MapViewState extends State<MapView> {
       flex: 6,
       child: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: LatLng(37.7749, -122.4194), //initiate to san francisco
+          target: LatLng(Constant.SAN_FRAN_GEO_LAT, Constant.SAN_FRAN_GEO_LONG),
           zoom: 1,
         ),
         onMapCreated: (controller) {
           MapControllerManager.of(context).mapController.controller = googleMapController = controller;
           AddressStore.readAddress().then((address) {
             GeoStore.readLatLng().then((LatLng position) {
-              String geolocation = position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
-                  ", " +
-                  position.longitude.toStringAsFixed(Constant.GEO_PRECISION);
+              bool isDefaultGeo = position.latitude == Constant.DEFAULT_GEO_LAT &&
+                  position.longitude == Constant.DEFAULT_GEO_LONG;
+              String geolocation = (isDefaultGeo)
+                  ? ""
+                  : position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
+                      ", " +
+                      position.longitude.toStringAsFixed(Constant.GEO_PRECISION);
               controller
-                  .moveCamera(CameraUpdate.newLatLngZoom(position, Constant.DEFAULT_ZOOM_LEVEL))
-                  .then((_) {
-                controller.addMarker(MarkerOptions(
-                  position: position,
-                  infoWindowText: InfoWindowText(address, geolocation),
-                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-                ));
-              });
+                  .moveCamera(CameraUpdate.newLatLngZoom(
+                      (isDefaultGeo)
+                          ? LatLng(Constant.SAN_FRAN_GEO_LAT, Constant.SAN_FRAN_GEO_LONG)
+                          : position,
+                      Constant.DEFAULT_ZOOM_LEVEL))
+                  .then(
+                (_) {
+                  if (!isDefaultGeo) {
+                    controller.addMarker(
+                      MarkerOptions(
+                        position: position,
+                        infoWindowText: InfoWindowText(address, geolocation),
+                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+                      ),
+                    );
+                  }
+                },
+              );
             });
           });
         },

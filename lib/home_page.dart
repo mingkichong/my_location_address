@@ -51,12 +51,16 @@ class BodyStructure extends StatelessWidget {
   Widget build(BuildContext context) {
     AddressStore.readAddress().then((address) {
       GeoStore.readLatLng().then((position) {
-        String addressGeo = address +
-            " \n(" +
-            position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
-            ", " +
-            position.longitude.toStringAsFixed(Constant.GEO_PRECISION) +
-            ")";
+        bool isDefaultGeo =
+            position.latitude == Constant.DEFAULT_GEO_LAT && position.longitude == Constant.DEFAULT_GEO_LONG;
+        String addressGeo = (isDefaultGeo)
+            ? ""
+            : address +
+                " \n(" +
+                position.latitude.toStringAsFixed(Constant.GEO_PRECISION) +
+                ", " +
+                position.longitude.toStringAsFixed(Constant.GEO_PRECISION) +
+                ")";
         AddressButtonManager.of(context).bloc.addressSink.add(addressGeo);
       });
     });
