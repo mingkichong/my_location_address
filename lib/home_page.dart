@@ -130,9 +130,19 @@ class AddressText extends StatelessWidget {
               Clipboard.setData(ClipboardData(text: value));
               Scaffold.of(context).showSnackBar(SnackBar(
                 duration: Duration(seconds: 2),
-                content: Text(
-                  'Address copied to clipboard',
-                  textAlign: TextAlign.center,
+                content: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.content_copy,
+                      color: Colors.lime,
+                    ),
+                    SizedBox(width: Constant.SIZED_BOX_WIDTH),
+                    Text(
+                      'Address copied to clipboard',
+                      style: TextStyle(fontFamily: 'century_gothic'),
+                    ),
+                  ],
                 ),
               ));
               Vibrate.feedback(FeedbackType.selection);
@@ -270,9 +280,19 @@ class _ClearButton extends StatelessWidget {
           Vibrate.feedback(FeedbackType.warning);
           Scaffold.of(context).showSnackBar(SnackBar(
             duration: Duration(seconds: 2),
-            content: Text(
-              'Long press to clear',
-              textAlign: TextAlign.center,
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.warning,
+                  color: Colors.red,
+                ),
+                SizedBox(width: Constant.SIZED_BOX_WIDTH),
+                Text(
+                  'Long press to clear',
+                  style: TextStyle(fontFamily: 'century_gothic'),
+                ),
+              ],
             ),
           ));
         },
