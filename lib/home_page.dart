@@ -7,6 +7,8 @@ import './constant.dart';
 import './control_button_bloc.dart';
 import './address_button_manager.dart';
 import './address_store.dart';
+import 'map_controller_manager.dart';
+import 'map_controller.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -32,9 +34,12 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: AddressButtonManager(
-        child: BodyStructure(),
-        bloc: ControlButtonBloc(),
+      body: MapControllerManager(
+        mapController: MapController(),
+        child: AddressButtonManager(
+          child: BodyStructure(),
+          bloc: ControlButtonBloc(),
+        ),
       ),
     );
   }
@@ -65,7 +70,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> {
-  GoogleMapController mapController;
+  GoogleMapController googleMapController;
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -76,8 +81,10 @@ class _MapViewState extends State<MapView> {
           zoom: 1,
         ),
         onMapCreated: (controller) {
-          mapController = controller;
+          MapControllerManager.of(context).mapController.controller = googleMapController = controller;
         },
+        tiltGesturesEnabled: false,
+        compassEnabled: false,
       ),
     );
   }
@@ -135,14 +142,17 @@ class _GetMyLocationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RaisedButton(
-      color: Colors.lightGreen,
+      color: Colors.green,
       textColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(Constant.BUTTON_BORDER_RADIUS)),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0.0, Constant.BUTTON_PADDING, 0.0, Constant.BUTTON_PADDING),
         child: Row(
           children: <Widget>[
-            Icon(Icons.my_location),
+            Icon(
+              Icons.my_location,
+              color: Colors.lime,
+            ),
             SizedBox(width: Constant.BUTTON_ICON_SPACING),
             Text(
               "Get My Address",
@@ -153,6 +163,11 @@ class _GetMyLocationButton extends StatelessWidget {
       ),
       onPressed: () {
         Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((position) {
+          MapControllerManager.of(context).mapController.controller.addMarker(
+                MarkerOptions(
+                  position: LatLng(position.latitude, position.longitude),
+                ),
+              );
           Geolocator()
               .placemarkFromCoordinates(position.latitude, position.longitude)
               .then((placeMarkerList) {
@@ -187,6 +202,7 @@ class _ClearButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onLongPress: () {
+        MapControllerManager.of(context).mapController.controller.clearMarkers();
         AddressStore.writeAddress(Constant.DEFAULT_ADDRESS);
         AddressButtonManager.of(context).bloc.addressSink.add(Constant.DEFAULT_ADDRESS);
         Vibrate.feedback(FeedbackType.success);
@@ -199,7 +215,10 @@ class _ClearButton extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(0.0, Constant.BUTTON_PADDING, 0.0, Constant.BUTTON_PADDING),
           child: Row(
             children: <Widget>[
-              Icon(Icons.remove_circle_outline),
+              Icon(
+                Icons.remove_circle,
+                color: Colors.lime,
+              ),
               SizedBox(width: Constant.BUTTON_ICON_SPACING),
               Text(
                 "Clear",
